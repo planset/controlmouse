@@ -1,0 +1,83 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="format-detection" content="telephone=yes">
+
+    <title></title>
+
+    <script type="text/javascript" src="{{ url_for('static', filename='js/quo.js') }}"></script>
+    <script type="text/javascript">
+
+$$(document).ready(function(){
+
+  var target = $$('#touch-area');
+
+  var count = 0
+  target.touch(function(){
+    target.text('touch ' + count);
+    count += 1;
+  }).swipe(function(){
+    target.text('swipe');
+    count += 1;
+  }).drag(function(){
+    target.text('drag');
+    count += 1;
+  }).finders(function(){
+    target.text('fingers');
+    count += 1;
+  });
+
+});
+
+function getBrowserWidth ( ) {
+    if ( window.innerWidth ) { return window.innerWidth; }
+    else if ( document.documentElement && document.documentElement.clientWidth != 0 ) { return document.documentElement.clientWidth; }
+    else if ( document.body ) { return document.body.clientWidth; }
+    return 0;
+}
+
+function getBrowserHeight ( ) {
+    if ( window.innerHeight ) { return window.innerHeight; }
+    else if ( document.documentElement && document.documentElement.clientHeight != 0 ) { return document.documentElement.clientHeight; }
+    else if ( document.body ) { return document.body.clientHeight; }
+    return 0;
+}
+
+  function touchMove(event) {
+    event.preventDefault();
+    var area = document.getElementById('touch-area');
+    area.innerText = 'x=' + event.touches[0].pageX
+                   + 'y=' + event.touches[0].pageY;
+    sendPoint(100 * event.touches[0].pageX / getBrowserWidth(),
+              100 * event.touches[0].pageY / getBrowserHeight())
+  };
+
+  function preventScroll(event) {
+    event.preventDefault();
+  }
+
+  // タッチイベントの初期化
+  document.addEventListener("touchstart", preventScroll, false);
+  document.addEventListener("touchmove", touchMove, false);
+  document.addEventListener("touchend", preventScroll, false);
+
+</script>
+<script type="text/javascript">
+  var ws = new WebSocket("ws://10.1.2.240:8000/move");
+  ws.onmessage = function(e) {
+  };
+  function sendPoint(x, y) {
+    ws.send(x + ',' + y);
+  };
+</script>
+
+    <style type="text/css">
+      #touch-area { width: 100%; height: 100%; background-color: #888; }
+    </style>
+
+  </head>
+  <body>
+    <div id='touch-area'></div>
+  </body>
+</html>
