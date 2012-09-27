@@ -1,29 +1,43 @@
 import os
-from gevent import pywsgi
-from geventwebsocket.handler import WebSocketHandler
 
-content = ''
+import tornado.httpserver
+import tornado.ioloop
+import tornado.web
+import tornado.websocket
 
-def app(environ, start_response):
-    if environ["PATH_INFO"] == '/move':
-        ws = environ["wsgi.websocket"]
-        while True:
-            src = ws.receive()
-            print 'src:', src
-            if src is None:
-                break
-            x, y = src.split(',')
-            print x, '', y
-            os.system('bin/PostMouseEvent {x} {y}'.format(x=x, y=y))
-    else:
-        start_response("200 OK", [
-                ("Content-Type", "text/html"),
-                ("Content-Length", str(len(content)))
-                ])  
-        return iter([content])
+from tornado.options import define
 
-if __name__=="__main__":
-    server = pywsgi.WSGIServer(('0.0.0.0', 8000), app, handler_class=WebSocketHandler)
-    server.serve_forever()
+define("port", default=8000, help="run on the given port", type=int)
 
 
+class ControlCursorWebSocket(tornado.websocket.WebSocketHandler):
+    def open(self):
+        print 'open'
+
+    def on_message(self, message):
+        x, y = message.split(',')
+        print x, '', y
+        os.system('bin/PostMouseEvent {x} {y}'.format(x=x, y=y))
+
+    def on_close(self):
+        print 'close'
+
+
+class Application(tornado.web.Application):
+    def __init__(self):
+        handlers = [
+                (r"/move", ControlCursorWebSocket),
+                ]
+        settings = dict(
+                debug=True,
+                )
+        tornado.web.Application.__init__(self, handlers, **settings)
+
+def main():
+    tornado.options.parse_command_line()
+    http_server = tornado.httpserver.HTTPServer(Application())
+    http_server.listen(8000)
+    tornado.ioloop.IOLoop.instance().start()
+
+if __name__ == "__main__":
+    main()

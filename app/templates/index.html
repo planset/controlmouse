@@ -6,29 +6,7 @@
 
     <title></title>
 
-    <script type="text/javascript" src="{{ url_for('static', filename='js/quo.js') }}"></script>
     <script type="text/javascript">
-
-$$(document).ready(function(){
-
-  var target = $$('#touch-area');
-
-  var count = 0
-  target.touch(function(){
-    target.text('touch ' + count);
-    count += 1;
-  }).swipe(function(){
-    target.text('swipe');
-    count += 1;
-  }).drag(function(){
-    target.text('drag');
-    count += 1;
-  }).finders(function(){
-    target.text('fingers');
-    count += 1;
-  });
-
-});
 
 function getBrowserWidth ( ) {
     if ( window.innerWidth ) { return window.innerWidth; }
@@ -57,7 +35,6 @@ function getBrowserHeight ( ) {
     event.preventDefault();
   }
 
-  // タッチイベントの初期化
   document.addEventListener("touchstart", preventScroll, false);
   document.addEventListener("touchmove", touchMove, false);
   document.addEventListener("touchend", preventScroll, false);
