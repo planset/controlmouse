@@ -1,3 +1,4 @@
+from __future__ import print_function
 import os
 
 import tornado.httpserver
@@ -10,23 +11,23 @@ from tornado.options import define
 define("port", default=8000, help="run on the given port", type=int)
 
 
-class ControlCursorWebSocket(tornado.websocket.WebSocketHandler):
+class ControlMouseWebSocket(tornado.websocket.WebSocketHandler):
     def open(self):
-        print 'open'
+        print('open')
 
     def on_message(self, message):
         x, y = message.split(',')
-        print x, '', y
+        print('move to ', x, ',', y)
         os.system('bin/PostMouseEvent {x} {y}'.format(x=x, y=y))
 
     def on_close(self):
-        print 'close'
+        print('close')
 
 
 class Application(tornado.web.Application):
     def __init__(self):
         handlers = [
-                (r"/move", ControlCursorWebSocket),
+                (r"/move", ControlMouseWebSocket),
                 ]
         settings = dict(
                 debug=True,
@@ -41,3 +42,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    

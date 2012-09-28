@@ -22,34 +22,70 @@ function getBrowserHeight ( ) {
     return 0;
 }
 
-  function touchMove(event) {
-    event.preventDefault();
-    var area = document.getElementById('touch-area');
-    area.innerText = 'x=' + event.touches[0].pageX
-                   + 'y=' + event.touches[0].pageY;
-    sendPoint(100 * event.touches[0].pageX / getBrowserWidth(),
-              100 * event.touches[0].pageY / getBrowserHeight())
-  };
+var INF = -9999
+var startX = INF;
+var startY = INF;
 
-  function preventScroll(event) {
-    event.preventDefault();
+function touchStart(event) {
+  event.preventDefault();
+  var area = document.getElementById('touch-area');
+  area.innerText = 'x=' + event.touches[0].pageX
+                 + 'y=' + event.touches[0].pageY;
+  startX = event.touches[0].pageX
+  startY = event.touches[0].pageY
+};
+
+function touchMove(event) {
+  event.preventDefault();
+  var area = document.getElementById('touch-area');
+  area.innerText = 'x=' + event.touches[0].pageX
+                 + 'y=' + event.touches[0].pageY;
+  if (startX != INF) {
+    dx = event.touches[0].pageX - startX
+    dy = event.touches[0].pageY - startY
+    sendPoint(100 * dx / getBrowserWidth(),
+              100 * dy / getBrowserHeight())
+    startX = event.touches[0].pageX
+    startY = event.touches[0].pageY
   }
+};
 
-  document.addEventListener("touchstart", preventScroll, false);
-  document.addEventListener("touchmove", touchMove, false);
-  document.addEventListener("touchend", preventScroll, false);
+function touchEnd(event) {
+  event.preventDefault();
+  var area = document.getElementById('touch-area');
+  area.innerText = 'x=' + event.touches[0].pageX
+                 + 'y=' + event.touches[0].pageY;
+  startX = INF
+  startY = INF
+};
 
-</script>
-<script type="text/javascript">
-  var ws = new WebSocket("ws://10.1.2.240:8000/move");
-  ws.onmessage = function(e) {
-  };
-  function sendPoint(x, y) {
-    ws.send(x + ',' + y);
-  };
-</script>
+function preventScroll(event) {
+  event.preventDefault();
+}
+
+document.addEventListener("touchstart", touchStart, false);
+document.addEventListener("touchmove", touchMove, false);
+document.addEventListener("touchend", touchEnd, false);
+
+    </script>
+
+    <script type="text/javascript">
+
+var ws = new WebSocket("ws://{{ wshost }}:8000/move");
+
+ws.onmessage = function(e) {
+
+};
+
+function sendPoint(x, y) {
+  ws.send(x + ',' + y);
+};
+
+    </script>
 
     <style type="text/css">
+      html        { margin: 0px; padding: 0px; }
+      body        { margin: 0px; padding: 0px; }
       #touch-area { width: 100%; height: 100%; background-color: #888; }
     </style>
 
