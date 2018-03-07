@@ -27,6 +27,7 @@ iphoneからMacのマウスを操作する
 1. terminalを起動します。::
 
     cd controlmouse
+    source env/bin/activate
     cd app
     python server.py
 
