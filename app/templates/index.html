@@ -71,7 +71,7 @@ document.addEventListener("touchend", touchEnd, false);
 
     <script type="text/javascript">
 
-var ws = new WebSocket("ws://{{ wshost }}:8000/move");
+var ws = new WebSocket("ws://{{ ipaddr }}:5000/ws");
 
 ws.onmessage = function(e) {
 
