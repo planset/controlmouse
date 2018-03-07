@@ -5,40 +5,29 @@ iphoneからMacのマウスを操作する
 
 対象環境
 =========
-* mac os x 10.8.2
-* python 2.7.3
+* python 2.7.3+
 * virtualenv
-* mkvirtualenv
+* ifconfig
 
 
 準備
-==========
-flask, tornadoをインストールします。
+====
 ::
 
-    mkvirtualenv controlmouse
-    pip install flask
+    git clone https://github.com/planset/controlmouse
+    cd controlmouse
+    virtualenv env
+    source env/bin/activate
     pip install tornado
 
 
 実行
 ====
 
-1. terminalを２つ起動しておきます。
-2. terminalの１つ目::
+1. terminalを起動します。::
 
-    cd controlmouse/app
-    workon controlmouse
-    python http_server.py
+    cd controlmouse
+    cd app
+    python server.py
 
-3. terminalの２つ目::
-
-    cd controlmouse/app
-    workon controlmouse
-    python ws_server.py
-
-4. iphoneのsafariで http://MacのIP:5000/ を開く。
-
-
-
-
+2. iphoneのsafariで http://MacのIP:5000/ を開く。
